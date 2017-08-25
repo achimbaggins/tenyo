@@ -84,7 +84,7 @@ router.post('/post-facebook', setAccessToken, (req,res)=>{
   console.log('===================');
 
   FB.api('/me/feed','post', {
-    message: 'kita jika'//req.headers.status
+    message: req.body.status
   },(response)=>{
     console.log('**********', response);
     res.send(response)
