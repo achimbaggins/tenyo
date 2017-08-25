@@ -22,7 +22,6 @@
         // Logged into your app and Facebook.
         localStorage.setItem('fbaccesstoken',response.authResponse.accessToken)
         getDataUser();
-        getFeedFb();
       } else{
 
         localStorage.removeItem('fbaccesstoken')
@@ -93,24 +92,18 @@
     
     
       function getFeedFb(){
-        $(document).ready(function(){
-        axios.get('http://localhost:3000/api/facebook/timeline',{
+        axios.post(`http://localhost:3000/home/updatestatus`, {
+          status: $('#status').val()
+        },{
           headers: {
             fbaccesstoken: localStorage.getItem('fbaccesstoken')
           }
         })
         .then( result => {
-          let data = result.data.data
-          console.log('--------------------- timeline',result);
-          data.forEach( dt => {
-            $('#timeline').append(`
-              <tr>
-              <td>${dt.story || 'your status'} ${dt.message || ''}</td>
-              <td></td>
-              </tr>
-              `)
-            })
-          })
+          console.log(result);
+        })
+        .catch( err => {
+          console.log(err);
         })
       }
 
