@@ -4,7 +4,7 @@ var FB = require('fb');
 var fb = new FB.Facebook({version: 'v2.8'})
 
 const googleMapsClient = require('@google/maps').createClient({
-  key: 'AIzaSyDu6jP4iQ5phQ8twwqmU5NfsFdonONgeCA'
+  key: 'AIzaSyBpJvN9XTwC_n_sC6pfc60Rprk8gKRr6oo'
 })
 const loginController = require('../controllers/loginController');
 
@@ -84,7 +84,8 @@ router.post('/post-facebook', setAccessToken, (req,res)=>{
   console.log('===================');
 
   FB.api('/me/feed','post', {
-    message: req.body.status
+    message: req.body.status,
+    link: req.body.link
   },(response)=>{
     console.log('**********', response);
     res.send(response)

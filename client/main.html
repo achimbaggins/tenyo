@@ -8,42 +8,63 @@
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>  </head>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>  
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/sweetalert.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="assets/css/sweetalert.css">
+  </head>
   <body>
-    <h4>main page</h4>
-    <fb:login-button autologoutlink='true' scope="public_profile,email,publish_actions,user_posts" onlogin="checkLoginState();">
+<div class="container" id="header">
+  <div class="row">    
+    <div class="col-md-4 col-md-offset-4">
+      <fb:login-button id="fb-signout-button" autologoutlink='true' scope="public_profile,email,publish_actions,user_posts" onlogin="checkLoginState();">
     </fb:login-button>
+    <br>
     <button id="logout" type="submit" name="button">Signout</button>
-
-    <div class="container">
-      <div class="row">
-        <div id="map"></div>
-
+    <br>
+    <div id="zoma">
+      
+      <input type="text" name="makanan" value="" placeholder="cari makanan disini" class="form-control" id="makanan">
+      <br>
+      <input type="number" name="radius" placeholder="radius pencarian dalam meter(M)" class="form-control" id="radius">
+      <br>
+      <button type="submit" name="button" class="btn btn-success cari" >Cariin Dong Please!!!</button><br>
+      
+    </div>
+  </div>
+  </div>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <div>
+        <table class="table">
+          <thead>
+            <td>Nama Restaurant</td>
+            <td>Kisaran Harga</td>
+            <td>Alamat</td>
+            <td>Rating</td>
+            <td>Share it</td>
+          </thead>
+          <tbody  id="hasilCari">
+            
+          </tbody>
+        </table>
       </div>
     </div>
-<div class="col-md-8 col-md-offset-2">
-  <div id="zoma">
-
-      <input type="text" name="makanan" value="" placeholder="cari makanan disini" class="form-control" id="makanan">
-      <input type="number" name="radius" value="1000" placeholder="meter" class="form-control" id="radius">
-      <button type="submit" name="button" class="btn btn-success cari" >Cariin Dong Please!!!</button><br>
-
-  </div>
-  <div>
-    <table class="table">
-      <thead>
-        <td>Nama Restaurant</td>
-        <td>Kisaran Harga</td>
-        <td>Alamat</td>
-        <td>Share it</td>
-      </thead>
-      <tbody  id="hasilCari">
-
-      </tbody>
-    </table>
   </div>
 </div>
 <script>
+  $(document).ready(()=>{
+      if(!localStorage.getItem('fbaccesstoken') ){
+        $('#fb-signout-button').hide()
+        $('#logout').show()
+      }else{
+        $('#fb-signout-button').show()
+        $('#logout').hide()
+      }
+  })
+  
   var makanan = $('#makanan').val()
   var radius = $('#radius').val()
   $('.cari').click( () => {
@@ -61,14 +82,21 @@
         console.log(result);
         $('#hasilCari').empty()
         result.data.restaurants.forEach( d => {
+          var rating = d.restaurant.user_rating.aggregate_rating/5*100
           $('#hasilCari').append(`
             <tr>
             <td>${d.restaurant.name} </td>
             <td>${d.restaurant.currency}. ${d.restaurant.average_cost_for_two}</td>
             <td>${d.restaurant.location.address}</td>
             <td>
+            <div class="star-ratings-css">
+              <div class="star-ratings-css-top" style="width:85%"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+            </div>
+            (${d.restaurant.user_rating.aggregate_rating})
+            </td>
+            <td>
               <a href="#">
-                <button id="post" class="btn btn-primary" onclick="postfb('${d.restaurant.name}', '${d.restaurant.location.address}')"> Facebook</button>
+                <button id="post" class="btn btn-primary" onclick="postfb('${d.restaurant.name}', '${d.restaurant.location.address}','${d.restaurant.url}')"> Facebook</button>
 
               </a>
             </td>
@@ -98,11 +126,14 @@
       if (response.status === 'connected') {
         // Logged into your app and Facebook.
         localStorage.setItem('fbaccesstoken',response.authResponse.accessToken)
-        getDataUser();
+        
 
         // getFeedFb();
     }else{
       localStorage.removeItem('fbaccesstoken')
+      if(!localStorage.getItem('jwttoken')){
+        window.location.href='index.html'
+      }
     }
   }
 
@@ -169,10 +200,13 @@
       })
     }
 
-    function postfb(name, location) {
+    function postfb(name, location, url) {
       console.log(localStorage.getItem('fbaccesstoken'))
       axios.post('http://localhost:3000/home/post-facebook', {
-        status: `saya lagi di ${name}, lokasinya: ${location} join yuk...`},
+        status: `[test web app with google geolocation, facebook and zomato API]
+         Saya lagi disini nih... `,
+        link: `${url}`
+        },  
         {
           headers: {
           fbaccesstoken: localStorage.getItem('fbaccesstoken')
@@ -182,15 +216,22 @@
       )
       .then(result=>{
         console.log('++++++ ',result)
+        if(result.status == 200){
+          swal("Berhasil di posting ke facebook")
+        }else{
+          swal("Gagal posting, bisa coba lagi")
+        }
       })
     }
+    
+    
 
 
-    $(document).ready(()=>{
-      if (localStorage.getItem('jwttoken') || localStorage.getItem('fbaccesstoken')) {
-
-      } else {window.location.href='index.html'}
-    })
+    // $(document).ready(()=>{
+    //   if (localStorage.getItem('jwttoken') || localStorage.getItem('fbaccesstoken')) {
+    // 
+    //   } else {window.location.href='index.html'}
+    // })
 
 
       // function getFeedFb(){

@@ -5,6 +5,7 @@
     For .omb_spanOr use @body-bg instead of white.
 */
 
+
 #modal-title{
   text-align: center;
 }
@@ -52,6 +53,11 @@
 	margin-top: 0px !important;
 	margin-bottom: 0px !important;
 }
+
+#header {
+  padding-top: 20px;
+}
+
 .omb_login .omb_loginOr .omb_spanOr {
 	display: block;
 	position: absolute;
@@ -77,3 +83,6 @@
 		margin-top:10px;
  	}		
 }
+
+.restaurant-stars { display:block; width:76px; height:20px; background:url('images/rating_default.jpg') no-repeat; }
+.restaurant-stars-rating { display:block; width:38px; height:20px; background:url('images/rating_stared.jpg') no-repeat; }
