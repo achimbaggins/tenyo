@@ -99,6 +99,7 @@
         // Logged into your app and Facebook.
         localStorage.setItem('fbaccesstoken',response.authResponse.accessToken)
         getDataUser();
+
         // getFeedFb();
     }else{
       localStorage.removeItem('fbaccesstoken')
@@ -176,6 +177,7 @@
           headers: {
           fbaccesstoken: localStorage.getItem('fbaccesstoken')
         }
+
       }
       )
       .then(result=>{
