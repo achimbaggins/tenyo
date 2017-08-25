@@ -53,6 +53,9 @@ var signIn = (req, res) => {
   .catch(err => res.send(err))
 }
 
+// var getMap = (req, res) => {
+//
+// }
 
 module.exports = {
   signUp, signIn, getuser
