@@ -14,14 +14,15 @@
     <link rel="stylesheet" type="text/css" href="assets/css/sweetalert.css">
   </head>
   <body>
-<div class="container" id="header">
-  <div class="row">    
-    <div class="col-md-4 col-md-offset-4">
-      <fb:login-button id="fb-signout-button" autologoutlink='true' scope="public_profile,email,publish_actions,user_posts" onlogin="checkLoginState();">
-    </fb:login-button>
-    <br>
-    <button id="logout" type="submit" name="button">Signout</button>
-    <br>
+    
+  <div class="container" id="header">
+    <div class="row">    
+      <div class="col-md-4 col-md-offset-4">
+        <fb:login-button id="fb-signout-button" autologoutlink='true' scope="public_profile,email,publish_actions,user_posts" onlogin="checkLoginState();">
+        </fb:login-button>
+      <br>
+        <button id="logout" type="submit" name="button">Signout</button>
+      <br>
     <div id="zoma">
       
       <input type="text" name="makanan" value="" placeholder="cari makanan disini" class="form-control" id="makanan">
@@ -70,9 +71,7 @@
   $('.cari').click( () => {
     axios.get(`http://localhost:3000/home/getlocation`)
     .then(getLocation => {
-      // console.log('===========', getLocation.data.);
-
-      console.log($('#radius').val());
+      console.log('===========', getLocation.data);
       axios.get(`https://developers.zomato.com/api/v2.1/search?q=${$('#makanan').val()}&lat=${getLocation.data.lat}&lon=${getLocation.data.lng}&radius=${$('#radius').val()}&sort=cost`,{
         headers: {
           'user-key': 'a94ee7880f2b00ba2bc73c9ee98e67f8'
@@ -104,8 +103,13 @@
             `)
         })
       })
+      .catch( err => {
+        console.log(err);
+      })
     })
-
+    .catch(err => {
+      console.log(err);
+    })
   })
 
   $('#logout').click(()=>{
